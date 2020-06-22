@@ -36,7 +36,7 @@ public class GoodBookFriendSpider {
             // ChromeOptions
             ChromeOptions chromeOptions = new ChromeOptions();
             // 设置后台静默模式启动浏览器
-            //chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--headless");
             //隐藏滚动条, 应对一些特殊页面
             chromeOptions.addArguments("--hide-scrollbars");
             //谷歌文档提到需要加上这个属性来规避bug

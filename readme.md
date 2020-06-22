@@ -100,6 +100,7 @@ export LC_ALL="zh_CN.utf8"
 |--incognito |	隐身模式（无痕模式）|
 |--disable-javascript 	|禁用javascript|
 |--disable-infobars 	|禁用浏览器正在被自动化程序控制的提示|
+
 # xpath语法查找元素
 一.绝对路径（不要使用，除非已经使用了所有方式仍然无法定位）
 方法：根据实际目录，逐层输写。
