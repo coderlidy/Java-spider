@@ -29,6 +29,8 @@ public class GoodBookFriendSpider {
     private static Logger logger = LoggerFactory.getLogger(GoodBookFriendSpider.class);
 
     public static void main(String[] args) {
+//        System.out.println(GoodBookFriendSpider.class.getProtectionDomain().getCodeSource().getLocation().toString());
+//        System.out.println(System.getProperty("java.class.path"));
         try {
             logger.info("\n\n\n\n");
             // 配置环境
@@ -98,7 +100,7 @@ public class GoodBookFriendSpider {
                 logger.info("已经签到了！无需再次签到！");
             }
             Thread.sleep(2000);
-            logger.info("阅次元完美结束");
+            logger.info("【阅次元完美结束】");
         } catch (Exception e) {
             screenshot(driver);
             logger.info("阅次元异常结束", e);
@@ -134,9 +136,6 @@ public class GoodBookFriendSpider {
             while (!(isExist(driver, By.id("online_time")) && driver.findElement(By.id("online_time")).getText().equals("今日奖励已领完"))) {
                 if (isExist(driver, By.id("online_time")))
                     logger.info(driver.findElement(By.id("online_time")).getText());
-//                for (int i=0;i<5;i++){//5 30 60
-//
-//                }
                 Thread.sleep(2000);
                 click(driver, By.id("fwin_dialog_submit"));
                 Thread.sleep(2000);
@@ -159,7 +158,7 @@ public class GoodBookFriendSpider {
             }
             logger.info(driver.findElement(By.id("online_time")).getText());
             Thread.sleep(2000);
-            logger.info("好书友完美结束");
+            logger.info("【好书友完美结束】");
         } catch (Exception e) {
             screenshot(driver);
             logger.info("好书友异常结束", e);
@@ -250,7 +249,17 @@ public class GoodBookFriendSpider {
         GoodBookFriendSpider.password=456
         */
         //通过该配置文件读取登录的账号和密码
-        String filePath="src/main/resources/login.properties";
+        String filePath=null;
+        switch (OSInfo.getOSType()) {
+            case LINUX:
+                filePath="/root/goodbookfriend/chromedriver/login.properties";
+                break;
+            case WINDOWS:
+                filePath="src/main/resources/login.properties";
+                break;
+            default:
+                throw new RuntimeException("不支持当前操作系统类型");
+        }
         Properties prop = new Properties();
         InputStream inputStream=null;
         String value = null;
