@@ -181,8 +181,7 @@ public class GoodBookFriendSpider {
             try {
                 if (isExist(driver, by)) driver.findElement(by).click();
             } catch (Exception e) {
-                logger.info("点击阻断异常", e);
-                throw e;
+                logger.info("元素存在但无法点击！", e);
             }
 
         }
@@ -242,6 +241,14 @@ public class GoodBookFriendSpider {
 
     }
     public static String getProperties(String keyWord) throws IOException {
+        /*  /src/main/resources/login.properties内容
+        #阅次元
+        abooky.username=123
+        abooky.password=456
+        #好书友
+        GoodBookFriendSpider.username=123
+        GoodBookFriendSpider.password=456
+        */
         //通过该配置文件读取登录的账号和密码
         String filePath="src/main/resources/login.properties";
         Properties prop = new Properties();
