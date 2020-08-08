@@ -5,7 +5,7 @@
 
 `src/main/java/WeiboSpider/Weibo.java`  
 `src/main/java/WeiboSpider/WeiboThreads.java`
-# 如何部署在linux上 
+# 阅次元、好书友每日签到和在线任务领取脚本如何部署在linux上 
 1. 下载selenium驱动，自己放在项目同级目录驱动文件夹下，版本要和Chrome一致  
     地址：http://npm.taobao.org/mirrors/chromedriver  
 2. 安装chrome  
