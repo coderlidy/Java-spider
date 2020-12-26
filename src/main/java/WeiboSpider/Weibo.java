@@ -16,6 +16,7 @@ public class Weibo{
     private static int picNum=0;
     private static int page;
     private static String original_pic;
+    private static String name;
     public Weibo(String uid,String uname,String fans){
         this.uid=uid;
         this.uname=uname;
@@ -23,23 +24,32 @@ public class Weibo{
     }
 
     public static void main(String[] args){
-        getUserAllPic("");
-        //getUserList("");
+        name="半半子";
+        getUserList(name);
+        getUserAllPic("2830125342");
+
     }
     public static void getUserAllPic(String uid){
+        picNum=0;
         String containerid="230413"+ uid;
         try{
             for(page=1;;page++){
                 getUserPic("https://m.weibo.cn/api/container/getIndex?containerid="+containerid+"&page="+page);
                 System.out.println("---------------------------------------------------------");
             }
-        }catch (NullPointerException e){
+        }catch (Exception e){
             e.printStackTrace();
             System.out.println("图片数："+picNum);
             System.out.println("页数："+page);
+            if(!(e instanceof NullPointerException)){
+                System.out.println("程序异常！！！");
+            }
         }
     }
     private static boolean getUserPic(String url) throws NullPointerException{
+        System.out.println("-------目录-------");
+        System.out.println(url);
+        System.out.println("-------开始-------");
         String content= MyHttpClientUtils.getByParams(url,null,null);
         //使用火狐浏览器打开url，返回的json直观
         //通过JSONObject来一步步解析json结构
@@ -56,7 +66,7 @@ public class Weibo{
             if(pics==null)continue;
             for(int j=0;j<pics.size();j++){
                 original_pic=pics.getJSONObject(j).getString("url").replaceFirst("orj360","large");
-                if(original_pic!=null) MyHttpClientUtils.getPic(original_pic,"image\\原图"+(++picNum)+original_pic.substring(original_pic.length()-4));
+                if(original_pic!=null) MyHttpClientUtils.getPic(original_pic,"F:\\pics\\"+name+"\\原图"+(++picNum)+original_pic.substring(original_pic.length()-4));
                 System.out.println(original_pic);
                 System.out.println("图片数："+picNum);
                 System.out.println("页数："+page);

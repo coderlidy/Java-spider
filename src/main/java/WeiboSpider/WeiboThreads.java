@@ -41,7 +41,7 @@ public class WeiboThreads implements Runnable{
     }
 
     public static void main(String[] args){
-        getUserAllPic("1749127163");
+        getUserAllPic("7479145185");
         //getUserList("雷军");
     }
     public static void getUserAllPic(String uid){

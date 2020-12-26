@@ -85,7 +85,13 @@ public class MyHttpClientUtils {
                 if (httpResponse.getEntity() != null) {
                     //获得response数据的回复体，将其转换为byte
                     byte[] bytes = EntityUtils.toByteArray(httpResponse.getEntity());
+                    //路径所属文件夹不存在时会创建文件夹
                     File file = new File(path);
+                    File fileParent = file.getParentFile();
+                    if(!fileParent.exists()){
+                        fileParent.mkdirs();
+                    }
+                    file.createNewFile();
                     FileOutputStream fos = new FileOutputStream(file);
                     fos.write(bytes);
                     fos.close();

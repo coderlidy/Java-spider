@@ -1,5 +1,6 @@
-# 基于Java+selenium的阅次元、好书友每日签到和在线任务领取  
 
+# 基于Java+selenium的阅次元、好书友每日签到和在线任务领取
+  
 `src/main/java/GoodBookFriendSpider.java`  
 # 基于Java+HttpClient微博图片爬虫（单/多线程）  
 
@@ -23,6 +24,12 @@
     5. 查看Chrome版本  
     `google-chrome --version`  
 3. 运行maven打包的项目jar文件
+# CentOS 8 在图形界面下打不开chrome
+1. 打开Chrome浏览器的快捷方式文件
+
+`$ vi /usr/share/applications/google-chrome.desktop`
+2. 修改 Exec=/usr/bin/google-chrome-stable %U 在其后面加上 --no-sandbox
+
 # CentOS 7 cron开启定时任务
 > `systemctl start crond`启动cron服务   
 
