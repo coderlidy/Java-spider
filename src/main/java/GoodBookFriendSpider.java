@@ -55,7 +55,8 @@ public class GoodBookFriendSpider {
         while (true){
             if(isTime(false,
                     new MyTime(1,40),
-                    new MyTime(14,10))){
+                    new MyTime(14,10),
+                    new MyTime(21,45))){
                 task();
             }
             Thread.sleep(30*1000L);
@@ -73,7 +74,7 @@ public class GoodBookFriendSpider {
             // ChromeOptions
             ChromeOptions chromeOptions = new ChromeOptions();
             // 设置后台静默模式启动浏览器
-            //chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--headless");
             //隐藏滚动条, 应对一些特殊页面
             chromeOptions.addArguments("--hide-scrollbars");
             //谷歌文档提到需要加上这个属性来规避bug
@@ -92,6 +93,7 @@ public class GoodBookFriendSpider {
             //chromeOptions.addArguments("User-Agent='Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Mobile Safari/537.36'");
             // 谷歌驱动生成
             driver = new ChromeDriver(chromeOptions);
+            logger.info("创建ChromeDriver:" + driver);
         }catch (Throwable e){
             logger.info("创建ChromeDriver失败");
             throw e;
@@ -104,8 +106,9 @@ public class GoodBookFriendSpider {
             screenshot();
         }
         if (driver != null) {
+            logger.info("销毁ChromeDriver:" + driver);
             driver.quit();
-            logger.info("关闭driver : " + driver);
+            driver=null;
         }
         logger.info("优雅关闭结束");
     }
@@ -276,8 +279,10 @@ public class GoodBookFriendSpider {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
         String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
         try {
-            FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File("log/" + time + "截图.jpg"));
-            logger.info("截图成功");
+            if(driver!=null){
+                FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File("log/" + time + "截图.jpg"));
+                logger.info("截图成功");
+            }
         } catch (Exception e) {
             logger.info("截图异常", e);
         }
@@ -287,7 +292,9 @@ public class GoodBookFriendSpider {
     private static void click(WebDriver driver, By by) throws Exception {
         if (driver != null && by != null) {
             try {
-                if (isExist(driver, by)) driver.findElement(by).click();
+                if (isExist(driver, by)) {
+                    driver.findElement(by).click();
+                }
             } catch (Exception e) {
                 logger.info("元素存在但无法点击！", e);
             }
