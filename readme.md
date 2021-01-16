@@ -149,7 +149,13 @@ export LC_ALL="zh_CN.utf8"
       例：find_element_by_xpath("//div[@name='q']")
       
   
+### selenium报错java.lang.IllegalStateException: The driver is not executable
+原因：驱动不可执行
 
+解决：
+在驱动所在目录  执行命令：
+`chmod a+x chromedriver_linux64`
+赋予可执行
 ### 在使用selenium-Java对元素进行定位时经常遇见以下两种问题：
 
 问题一：在当前页面进行跳转时，提示 Unable to locate element

@@ -29,7 +29,7 @@ public class GoodBookFriendSpider {
     /**
      * jar运行目录
      */
-    private static final String EXEC_DIR = System.getProperty("user.dir");
+    private static final String EXEC_DIR = "/".equals(System.getProperty("user.dir")) ? "" : System.getProperty("user.dir");
     private static final String CHROME_DRIVER_LINUX = "chromedriver_linux64";
     private static final String CHROME_DRIVER_WIN = "chromedriver_win32.exe";
     private static final String CHROME_DRIVER_MAC = "chromedriver_mac64";
@@ -47,33 +47,34 @@ public class GoodBookFriendSpider {
         });
         switch (OSInfo.getOSType()) {
             case LINUX:
-                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/"+CHROME_DRIVER_LINUX);
+                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/" + CHROME_DRIVER_LINUX);
                 break;
             case MACOSX:
-                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/"+CHROME_DRIVER_MAC);
+                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/" + CHROME_DRIVER_MAC);
                 break;
             case WINDOWS:
-                System.setProperty("webdriver.chrome.driver",  EXEC_DIR + "\\"+CHROME_DRIVER_WIN);
+                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "\\" + CHROME_DRIVER_WIN);
                 break;
             default:
                 throw new RuntimeException("不支持当前操作系统类型");
         }
+        System.out.println("chromedriver路径：" + System.getProperty("webdriver.chrome.driver"));
     }
 
     public static void main(String[] args) throws Throwable {
+        while (true) {
+            if (isTime(false,
+                    new MyTime(1, 40),
+                    new MyTime(14, 10),
+                    new MyTime(20, 45))) {
+                task();
+            }
+            Thread.sleep(20 * 1000L);
+        }
 //        while (true) {
-//            if (isTime(false,
-//                    new MyTime(1, 40),
-//                    new MyTime(14, 10),
-//                    new MyTime(21, 45))) {
-//                task();
-//            }
+//            task();
 //            Thread.sleep(30 * 1000L);
 //        }
-        while (true) {
-            task();
-            Thread.sleep(30*1000L);
-        }
     }
 
     public static void initChromeDriver() throws Throwable {
@@ -340,10 +341,12 @@ public class GoodBookFriendSpider {
         String filePath = null;
         switch (OSInfo.getOSType()) {
             case LINUX:
-                filePath = EXEC_DIR+ "/"+"login.properties";
+                filePath = EXEC_DIR + "/" + "login.properties";
+                System.out.println("login配置文件：" + filePath);
                 break;
             case WINDOWS:
-                filePath =EXEC_DIR + "\\"+"login.properties";
+                filePath = EXEC_DIR + "\\" + "login.properties";
+                System.out.println("login配置文件：" + filePath);
                 break;
             default:
                 throw new RuntimeException("不支持当前操作系统类型");

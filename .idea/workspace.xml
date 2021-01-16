@@ -67,6 +67,9 @@
       </MavenImportingSettings>
     </option>
   </component>
+  <component name="MavenRunner">
+    <option name="skipTests" value="true" />
+  </component>
   <component name="ProjectId" id="1czm6CbFO1tYvXjFEu7Qwsh1Tsn" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="1" id="Add" />
@@ -218,7 +221,7 @@
       <workItem from="1609249014702" duration="4075000" />
       <workItem from="1610285445769" duration="865000" />
       <workItem from="1610287006506" duration="6357000" />
-      <workItem from="1610636660291" duration="5980000" />
+      <workItem from="1610636660291" duration="11911000" />
     </task>
     <servers />
   </component>
@@ -238,22 +241,22 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="413" y="110" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1366.728@0.0.1366.728" timestamp="1610785739409" />
-    <state width="1323" height="203" key="GridCell.Tab.0.bottom" timestamp="1610785836590">
+    <state width="1323" height="69" key="GridCell.Tab.0.bottom" timestamp="1610800094511">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="203" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1610785836590" />
-    <state width="1323" height="203" key="GridCell.Tab.0.center" timestamp="1610785836589">
+    <state width="1323" height="69" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1610800094511" />
+    <state width="1323" height="69" key="GridCell.Tab.0.center" timestamp="1610800094511">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="203" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1610785836589" />
-    <state width="1323" height="203" key="GridCell.Tab.0.left" timestamp="1610785836589">
+    <state width="1323" height="69" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1610800094511" />
+    <state width="1323" height="69" key="GridCell.Tab.0.left" timestamp="1610800094511">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="203" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1610785836589" />
-    <state width="1323" height="203" key="GridCell.Tab.0.right" timestamp="1610785836590">
+    <state width="1323" height="69" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1610800094511" />
+    <state width="1323" height="69" key="GridCell.Tab.0.right" timestamp="1610800094511">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1323" height="203" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1610785836590" />
+    <state width="1323" height="69" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1610800094511" />
     <state width="1323" height="272" key="GridCell.Tab.1.bottom" timestamp="1610632617845">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -274,9 +277,9 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1610785013228" />
-    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1610785910126">
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup" timestamp="1610795822961">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1610785910126" />
+    <state x="346" y="49" width="672" height="678" key="search.everywhere.popup/0.0.1366.728@0.0.1366.728" timestamp="1610795822961" />
   </component>
 </project>
