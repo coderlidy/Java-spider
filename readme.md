@@ -12,7 +12,7 @@
 2. 安装chrome  
     1. 下载安装脚本  
     在下载目录中，执行以下命令，将安装脚本下载到本地  
-    `wget https://intoli.com/install-google-chrome.sh`  
+    `wget https://intoli.com/install-google-chrome.sh`  (没有wget安装一下`yum install wget`)
     2. 然后授予可执行权限  
     `chmod 755 ./install-google-chrome.sh`  
     3. 执行脚本  
@@ -23,7 +23,18 @@
     如果在当前文件夹中出现screenshot.png  则安装成功
     5. 查看Chrome版本  
     `google-chrome --version`  
-3. 运行maven打包的项目jar文件
+3. 运行maven打包项目成jar文件
+4. 将ChromeDriver文件（chromedriver_linux64/chromedriver_win32.exe）和login.properties放到jar运行目录
+```properties
+#login.properties内容
+#阅次元
+abooky.username=xxx
+abooky.password=xxxx
+#好书友
+GoodBookFriendSpider.username=xxx
+GoodBookFriendSpider.password=xxxx
+```
+5.  运行jar
 # CentOS 8 在图形界面下打不开chrome
 1. 打开Chrome浏览器的快捷方式文件
 
@@ -69,13 +80,15 @@
 # linux上chrome中文显示方块解决方法
 将windows中的字体拷贝到centos中，然后执行几个命令即可。
 windows xp中字体位于C:/WINDOWS/Fonts目录中，每中字体一个文件，比如simsun.ttc
-centos中的字体文件位于/usr/share/fonts/,每种字体一个目录，比如wqy-zenhei
+centos中的字体文件位于/usr/share/fonts/,每种字体一个目录
+
 安装过程是，首先在centos的/usr/share/fonts/目录下新建simsun目录
-然后将windows中的simsun.ttc拷贝到/usr/share/fonts/simsun目录
-输入以下3个命令  
-`mkfontscale`如果找不到命令mkfontscale则要安装，`yum install mkfontscale`  
+然后将windows中的ssss.ttc拷贝到/usr/share/fonts/simsun目录
+
+在/usr/share/fonts/simsun目录下输入以下3个命令  
+`mkfontscale`（如果找不到命令mkfontscale：`yum install mkfontscale`） 
 `mkfontdir`  
-`fc-cache -fv`fc命令也是一样的执行： `yum install fontconfig`   
+`fc-cache -fv`(如果找不到命令fc： `yum install fontconfig`)
 然后再次打开的Chrome就显示中文了。 
 ```
 如果安装时出现Could not resolve host: mirrors.cloud.aliyuncs.com; Name or service not known"

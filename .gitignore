@@ -4,3 +4,5 @@
 /target/
 /log/
 /src/main/resources/login.properties
+login.properties
+src/main/java/MyTest.java

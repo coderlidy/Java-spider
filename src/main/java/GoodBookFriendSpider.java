@@ -24,10 +24,18 @@ import static net.bytebuddy.implementation.MethodDelegation.to;
  * 好书友和阅次元每日签到和在线任务 ChromeDriver 83.0.4103.39
  */
 public class GoodBookFriendSpider {
-    private static final String BOOK_URL="https://www.93hsy.com"; // https://www.93book.com
-    private static final String ABOOKY_URL="https://www.abooky.com";
+    private static final String BOOK_URL = "https://www.93hsy.com"; // https://www.93book.com
+    private static final String ABOOKY_URL = "https://www.abooky.com";
+    /**
+     * jar运行目录
+     */
+    private static final String EXEC_DIR = System.getProperty("user.dir");
+    private static final String CHROME_DRIVER_LINUX = "chromedriver_linux64";
+    private static final String CHROME_DRIVER_WIN = "chromedriver_win32.exe";
+    private static final String CHROME_DRIVER_MAC = "chromedriver_mac64";
     private static WebDriver driver = null;
     private static Logger logger = LoggerFactory.getLogger(GoodBookFriendSpider.class);
+
     // 初始化配置环境
     static {
         //程序被kill杀死时执行    关闭钩子本质上是一个线程（也称为Hook线程），对于一个JVM中注册的多个关闭钩子它们将会并发执行，所以JVM并不保证它们的执行顺序；由于是并发执行的，那么很可能因为代码不当导致出现竞态条件或死锁等问题，为了避免该问题，可使用SignalHandler
@@ -39,33 +47,35 @@ public class GoodBookFriendSpider {
         });
         switch (OSInfo.getOSType()) {
             case LINUX:
-                System.setProperty("webdriver.chrome.driver", "/root/goodbookfriend/chromedriver/chromedriver_linux64");
+                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/"+CHROME_DRIVER_LINUX);
                 break;
             case MACOSX:
-                System.setProperty("webdriver.chrome.driver", getPath() + "/chromedriver/chromedriver_mac64");
+                System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/"+CHROME_DRIVER_MAC);
                 break;
             case WINDOWS:
-                System.setProperty("webdriver.chrome.driver", getPath() + "/chromedriver/chromedriver_win32.exe");
+                System.setProperty("webdriver.chrome.driver",  EXEC_DIR + "\\"+CHROME_DRIVER_WIN);
                 break;
             default:
                 throw new RuntimeException("不支持当前操作系统类型");
         }
     }
+
     public static void main(String[] args) throws Throwable {
-        while (true){
-            if(isTime(false,
-                    new MyTime(1,40),
-                    new MyTime(14,10),
-                    new MyTime(21,45))){
-                task();
-            }
+//        while (true) {
+//            if (isTime(false,
+//                    new MyTime(1, 40),
+//                    new MyTime(14, 10),
+//                    new MyTime(21, 45))) {
+//                task();
+//            }
+//            Thread.sleep(30 * 1000L);
+//        }
+        while (true) {
+            task();
             Thread.sleep(30*1000L);
         }
-//        while (true) {
-//            task();
-//            Thread.sleep(30*1000L);
-//        }
     }
+
     public static void initChromeDriver() throws Throwable {
         //        System.out.println(GoodBookFriendSpider.class.getProtectionDomain().getCodeSource().getLocation().toString());
 //        System.out.println(System.getProperty("java.class.path"));
@@ -94,12 +104,13 @@ public class GoodBookFriendSpider {
             // 谷歌驱动生成
             driver = new ChromeDriver(chromeOptions);
             logger.info("创建ChromeDriver:" + driver);
-        }catch (Throwable e){
+        } catch (Throwable e) {
             logger.info("创建ChromeDriver失败");
             throw e;
         }
     }
-    public static void finish(){
+
+    public static void finish() {
         logger.info("进入优雅关闭");
         //如果chromedriver没有及时关闭会一直在进程中，可能会占用端口
         if (driver != null) {
@@ -108,19 +119,22 @@ public class GoodBookFriendSpider {
         if (driver != null) {
             logger.info("销毁ChromeDriver:" + driver);
             driver.quit();
-            driver=null;
+            driver = null;
         }
         logger.info("优雅关闭结束");
     }
-    static class MyTime{
+
+    static class MyTime {
         private int hour;
         private int minute;
-        public MyTime(int hour,int minute){
-            this.hour=hour;
-            this.minute=minute;
+
+        public MyTime(int hour, int minute) {
+            this.hour = hour;
+            this.minute = minute;
         }
-        public MyTime(int minute){
-            this.minute=minute;
+
+        public MyTime(int minute) {
+            this.minute = minute;
         }
 
         public int getHour() {
@@ -140,15 +154,15 @@ public class GoodBookFriendSpider {
         }
     }
 
-    private static boolean isTime(boolean onlyMinute,MyTime... myTimeList) throws InterruptedException {
+    private static boolean isTime(boolean onlyMinute, MyTime... myTimeList) throws InterruptedException {
         Date date = new Date();
-        for (MyTime myTime:myTimeList){
-            if(onlyMinute){
-                if(myTime.getMinute()==date.getMinutes()) {
+        for (MyTime myTime : myTimeList) {
+            if (onlyMinute) {
+                if (myTime.getMinute() == date.getMinutes()) {
                     return true;
                 }
-            }else {
-                if(myTime.getHour()==date.getHours() && myTime.getMinute()==date.getMinutes()) {
+            } else {
+                if (myTime.getHour() == date.getHours() && myTime.getMinute() == date.getMinutes()) {
                     return true;
                 }
             }
@@ -156,9 +170,9 @@ public class GoodBookFriendSpider {
         return false;
     }
 
-    private static void task(){
+    private static void task() {
         try {
-            if(driver==null){
+            if (driver == null) {
                 initChromeDriver();
             }
             abooky(driver);
@@ -279,7 +293,7 @@ public class GoodBookFriendSpider {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
         String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
         try {
-            if(driver!=null){
+            if (driver != null) {
                 FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File("log/" + time + "截图.jpg"));
                 logger.info("截图成功");
             }
@@ -312,18 +326,6 @@ public class GoodBookFriendSpider {
         }
     }
 
-    public static String getPath() {
-        String path = GoodBookFriendSpider.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        if (System.getProperty("os.name").contains("dows")) {
-            path = path.substring(0, path.length());
-        }
-        if (path.contains("jar")) {
-            path = path.substring(0, path.lastIndexOf("."));
-            return path.substring(0, path.lastIndexOf("/"));
-        }
-        return path.replace("target/classes/", "");
-    }
-
 
     public static String getProperties(String keyWord) throws IOException {
         /*  /src/main/resources/login.properties内容
@@ -335,19 +337,19 @@ public class GoodBookFriendSpider {
         GoodBookFriendSpider.password=456
         */
         //通过该配置文件读取登录的账号和密码
-        String filePath=null;
+        String filePath = null;
         switch (OSInfo.getOSType()) {
             case LINUX:
-                filePath="/root/goodbookfriend/chromedriver/login.properties";
+                filePath = EXEC_DIR+ "/"+"login.properties";
                 break;
             case WINDOWS:
-                filePath="src/main/resources/login.properties";
+                filePath =EXEC_DIR + "\\"+"login.properties";
                 break;
             default:
                 throw new RuntimeException("不支持当前操作系统类型");
         }
         Properties prop = new Properties();
-        InputStream inputStream=null;
+        InputStream inputStream = null;
         String value = null;
         try {
             // 通过输入缓冲流进行读取配置文件
@@ -357,7 +359,7 @@ public class GoodBookFriendSpider {
             // 根据关键字获取value值
             value = prop.getProperty(keyWord);
         } finally {
-            if(inputStream!=null) {
+            if (inputStream != null) {
                 inputStream.close();
             }
         }
