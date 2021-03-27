@@ -1,5 +1,3 @@
-
-import WeiboSpider.KillHandler;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
@@ -7,18 +5,18 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.awt.OSInfo;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import static net.bytebuddy.implementation.MethodDelegation.to;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Properties;
 
 /**
  * 好书友和阅次元每日签到和在线任务 ChromeDriver 83.0.4103.39
@@ -62,13 +60,17 @@ public class GoodBookFriendSpider {
     }
 
     public static void main(String[] args) throws Throwable {
+        int hour = new Date().getHours();
+        int minute = new Date().getMinutes();
+        task();
         while (true) {
             if (isTime(false,
-                    new MyTime(1, 40),
-                    new MyTime(14, 10),
-                    new MyTime(20, 45))) {
+                    new MyTime(hour, minute),
+                    new MyTime(hour + 8, minute),
+                    new MyTime(hour + 16, minute))) {
                 task();
             }
+            System.out.println();
             Thread.sleep(20 * 1000L);
         }
 //        while (true) {
@@ -115,7 +117,7 @@ public class GoodBookFriendSpider {
         logger.info("进入优雅关闭");
         //如果chromedriver没有及时关闭会一直在进程中，可能会占用端口
         if (driver != null) {
-            screenshot();
+            screenByRobot();
         }
         if (driver != null) {
             logger.info("销毁ChromeDriver:" + driver);
@@ -130,7 +132,7 @@ public class GoodBookFriendSpider {
         private int minute;
 
         public MyTime(int hour, int minute) {
-            this.hour = hour;
+            this.hour = hour % 24;
             this.minute = minute;
         }
 
@@ -153,11 +155,17 @@ public class GoodBookFriendSpider {
         public void setMinute(int minute) {
             this.minute = minute;
         }
+
+        @Override
+        public String toString() {
+            return "计划时间" + this.hour + ":" + this.minute;
+        }
     }
 
     private static boolean isTime(boolean onlyMinute, MyTime... myTimeList) throws InterruptedException {
         Date date = new Date();
         for (MyTime myTime : myTimeList) {
+            System.out.println("当前时间" + date.getHours() + ":" + date.getMinutes() + " " + myTime.toString());
             if (onlyMinute) {
                 if (myTime.getMinute() == date.getMinutes()) {
                     return true;
@@ -180,7 +188,7 @@ public class GoodBookFriendSpider {
             goodBookFriend(driver);
         } catch (Throwable e) {
             if (driver != null) {
-                screenshot();
+                screenByRobot();
             }
             logger.info("程序异常", e);
         } finally {
@@ -192,7 +200,7 @@ public class GoodBookFriendSpider {
     private static void abooky(WebDriver driver) {
 
         try {
-            logger.info("阅次元开始");
+            logger.info("阅次元开始 " + ABOOKY_URL);
             // 进入首页
             driver.get(ABOOKY_URL);
             logger.info("进入网站成功");
@@ -226,18 +234,18 @@ public class GoodBookFriendSpider {
         } catch (Exception e) {
             logger.info("阅次元异常结束", e);
         }
-        screenshot();
+        screenByRobot();
     }
 
     private static void goodBookFriend(WebDriver driver) {
         try {
-            logger.info("好书友开始");
+            logger.info("好书友开始 " + BOOK_URL);
             // 进入首页
             driver.get(BOOK_URL);
             logger.info("进入网站成功");
             //  模拟登录
             driver.findElement(By.id("ls_username")).sendKeys(getProperties("GoodBookFriendSpider.username"));
-            screenshot();
+            screenByRobot();
             logger.info("输入账号成功");
             driver.findElement(By.id("ls_password")).sendKeys(getProperties("GoodBookFriendSpider.password"));
             logger.info("输入密码成功");
@@ -287,22 +295,9 @@ public class GoodBookFriendSpider {
         } catch (Exception e) {
             logger.info("好书友异常结束", e);
         }
-        screenshot();
+        screenByRobot();
     }
 
-    public static void screenshot() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
-        String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
-        try {
-            if (driver != null) {
-                FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File("log/" + time + "截图.jpg"));
-                logger.info("截图成功");
-            }
-        } catch (Exception e) {
-            logger.info("截图异常", e);
-        }
-
-    }
 
     private static void click(WebDriver driver, By by) throws Exception {
         if (driver != null && by != null) {
@@ -367,5 +362,35 @@ public class GoodBookFriendSpider {
             }
         }
         return value;
+    }
+
+    /**
+     * awt截图
+     */
+    public static void screenByRobot() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
+        String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
+        BufferedImage image = null;
+        try {
+            image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+            ImageIO.write(image, "jpg", new File("log/" + time + "截图.jpg"));
+            logger.info("截图成功");
+        } catch (Exception e) {
+            logger.info("截图异常", e);
+        }
+    }
+
+    public static void screenshot() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
+        String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
+        try {
+            if (driver != null) {
+                FileUtils.copyFile(((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE), new File("log/" + time + "截图.jpg"));
+                logger.info("截图成功");
+            }
+        } catch (Exception e) {
+            logger.info("截图异常", e);
+        }
+
     }
 }
