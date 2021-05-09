@@ -43,6 +43,8 @@ public class GoodBookFriendSpider {
                 finish();
             }
         });
+        //awt截图设置
+        //System.setProperty("java.awt.headless", "false");
         switch (OSInfo.getOSType()) {
             case LINUX:
                 System.setProperty("webdriver.chrome.driver", EXEC_DIR + "/" + CHROME_DRIVER_LINUX);
@@ -65,12 +67,10 @@ public class GoodBookFriendSpider {
         task();
         while (true) {
             if (isTime(false,
-                    new MyTime(hour, minute),
                     new MyTime(hour + 8, minute),
                     new MyTime(hour + 16, minute))) {
                 task();
             }
-            System.out.println();
             Thread.sleep(20 * 1000L);
         }
 //        while (true) {
@@ -79,25 +79,30 @@ public class GoodBookFriendSpider {
 //        }
     }
 
-    public static void initChromeDriver() throws Throwable {
+    public static void initChromeDriver(boolean isHide) throws Throwable {
         //        System.out.println(GoodBookFriendSpider.class.getProtectionDomain().getCodeSource().getLocation().toString());
 //        System.out.println(System.getProperty("java.class.path"));
         logger.info("\n\n\n\n");
+        logger.info("开始创建ChromeDriver");
         try {
             // ChromeOptions
             ChromeOptions chromeOptions = new ChromeOptions();
-            // 设置后台静默模式启动浏览器
-            chromeOptions.addArguments("--headless");
+            if (isHide) {
+                // 设置后台静默模式启动浏览器
+                chromeOptions.addArguments("--headless");
+            }
             //隐藏滚动条, 应对一些特殊页面
             chromeOptions.addArguments("--hide-scrollbars");
             //谷歌文档提到需要加上这个属性来规避bug
             chromeOptions.addArguments("--disable-gpu");
+            chromeOptions.addArguments("--disable-dev-shm-usage");
             //在root权限下运行 linux  解决DevToolsActivePort文件不存在的报错
             chromeOptions.addArguments("--no-sandbox");
             // 不加载图片
             chromeOptions.addArguments("blink-settings=imagesEnabled=false");
             //设置分辨率
             chromeOptions.addArguments("--window-size=1920,1080");
+
             //最大化窗口运行
             //chromeOptions.addArguments("--start-maximized");
             //浏览器最大化 该方式有可能报错：Unable to receive message from renderer
@@ -106,18 +111,19 @@ public class GoodBookFriendSpider {
             //chromeOptions.addArguments("User-Agent='Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Mobile Safari/537.36'");
             // 谷歌驱动生成
             driver = new ChromeDriver(chromeOptions);
-            logger.info("创建ChromeDriver:" + driver);
+            logger.info("创建ChromeDriver成功:" + driver);
         } catch (Throwable e) {
-            logger.info("创建ChromeDriver失败");
+            logger.error("创建ChromeDriver失败");
             throw e;
         }
     }
+
 
     public static void finish() {
         logger.info("进入优雅关闭");
         //如果chromedriver没有及时关闭会一直在进程中，可能会占用端口
         if (driver != null) {
-            screenByRobot();
+            catScreen();
         }
         if (driver != null) {
             logger.info("销毁ChromeDriver:" + driver);
@@ -165,7 +171,6 @@ public class GoodBookFriendSpider {
     private static boolean isTime(boolean onlyMinute, MyTime... myTimeList) throws InterruptedException {
         Date date = new Date();
         for (MyTime myTime : myTimeList) {
-            System.out.println("当前时间" + date.getHours() + ":" + date.getMinutes() + " " + myTime.toString());
             if (onlyMinute) {
                 if (myTime.getMinute() == date.getMinutes()) {
                     return true;
@@ -182,15 +187,15 @@ public class GoodBookFriendSpider {
     private static void task() {
         try {
             if (driver == null) {
-                initChromeDriver();
+                initChromeDriver(true);
             }
             abooky(driver);
             goodBookFriend(driver);
         } catch (Throwable e) {
             if (driver != null) {
-                screenByRobot();
+                catScreen();
             }
-            logger.info("程序异常", e);
+            logger.error("程序异常", e);
         } finally {
             finish();
             logger.info("程序执行完毕");
@@ -232,9 +237,9 @@ public class GoodBookFriendSpider {
             Thread.sleep(2000);
             logger.info("【阅次元完美结束】");
         } catch (Exception e) {
-            logger.info("阅次元异常结束", e);
+            logger.error("阅次元异常结束", e);
         }
-        screenByRobot();
+        catScreen();
     }
 
     private static void goodBookFriend(WebDriver driver) {
@@ -245,7 +250,7 @@ public class GoodBookFriendSpider {
             logger.info("进入网站成功");
             //  模拟登录
             driver.findElement(By.id("ls_username")).sendKeys(getProperties("GoodBookFriendSpider.username"));
-            screenByRobot();
+            catScreen();
             logger.info("输入账号成功");
             driver.findElement(By.id("ls_password")).sendKeys(getProperties("GoodBookFriendSpider.password"));
             logger.info("输入密码成功");
@@ -293,9 +298,9 @@ public class GoodBookFriendSpider {
             Thread.sleep(2000);
             logger.info("【好书友完美结束】");
         } catch (Exception e) {
-            logger.info("好书友异常结束", e);
+            logger.error("好书友异常结束", e);
         }
-        screenByRobot();
+        catScreen();
     }
 
 
@@ -306,7 +311,7 @@ public class GoodBookFriendSpider {
                     driver.findElement(by).click();
                 }
             } catch (Exception e) {
-                logger.info("元素存在但无法点击！", e);
+                logger.error("元素存在但无法点击！", e);
             }
 
         }
@@ -317,7 +322,7 @@ public class GoodBookFriendSpider {
             driver.findElement(by);
             return true;
         } catch (org.openqa.selenium.NoSuchElementException e) {
-            logger.info("未找到元素 " + by);
+            logger.error("未找到元素 " + by);
             return false;
         }
     }
@@ -337,11 +342,11 @@ public class GoodBookFriendSpider {
         switch (OSInfo.getOSType()) {
             case LINUX:
                 filePath = EXEC_DIR + "/" + "login.properties";
-                System.out.println("login配置文件：" + filePath);
+                System.out.println("读取login配置文件：" + filePath);
                 break;
             case WINDOWS:
                 filePath = EXEC_DIR + "\\" + "login.properties";
-                System.out.println("login配置文件：" + filePath);
+                System.out.println("读取login配置文件：" + filePath);
                 break;
             default:
                 throw new RuntimeException("不支持当前操作系统类型");
@@ -364,10 +369,14 @@ public class GoodBookFriendSpider {
         return value;
     }
 
+    public static void catScreen() {
+        screenshot();
+    }
+
     /**
      * awt截图
      */
-    public static void screenByRobot() {
+    public static void screenByAwt() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-(HH：mm)"); //转换时间格式
         String time = dateFormat.format(Calendar.getInstance().getTime()); //获取当前时间
         BufferedImage image = null;
@@ -376,7 +385,7 @@ public class GoodBookFriendSpider {
             ImageIO.write(image, "jpg", new File("log/" + time + "截图.jpg"));
             logger.info("截图成功");
         } catch (Exception e) {
-            logger.info("截图异常", e);
+            logger.error("截图异常", e);
         }
     }
 
@@ -389,8 +398,7 @@ public class GoodBookFriendSpider {
                 logger.info("截图成功");
             }
         } catch (Exception e) {
-            logger.info("截图异常", e);
+            logger.error("截图异常", e);
         }
-
     }
 }
